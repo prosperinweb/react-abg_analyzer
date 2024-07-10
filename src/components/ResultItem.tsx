@@ -1,42 +1,50 @@
-import { ArrowDown, ArrowUp, AlertTriangle, CheckCircle } from "lucide-react";
-
-type Status = "low" | "high" | "normal";
+import React from "react";
+import { ArrowDown, ArrowUp, Minus, AlertTriangle } from "lucide-react";
+import { AnalysisResult } from "../types";
+import { useABG } from "../contexts/ABGContext";
 
 interface ResultItemProps {
   label: string;
   value: string;
-  status: Status;
+  status: AnalysisResult["status"];
   unit: string;
 }
 
-const ResultItem = ({ label, value, status, unit }: ResultItemProps) => {
-  const getStatusColor = (status: Status) => {
+const ResultItem: React.FC<ResultItemProps> = ({
+  label,
+  value,
+  status,
+  unit,
+}) => {
+  const { state } = useABG();
+
+  const getStatusColor = (status: AnalysisResult["status"]) => {
     switch (status) {
       case "low":
         return "text-blue-500";
       case "high":
         return "text-red-500";
       case "normal":
-        return "text-green-500";
+        return state.darkMode ? "text-green-400" : "text-green-500";
       default:
         return "text-yellow-500";
     }
   };
 
-  const getStatusIcon = (status: Status) => {
+  const getStatusIcon = (status: AnalysisResult["status"]) => {
     switch (status) {
       case "low":
         return <ArrowDown className="w-4 h-4" />;
       case "high":
         return <ArrowUp className="w-4 h-4" />;
       case "normal":
-        return <CheckCircle className="w-4 h-4" />;
+        return <Minus className="w-4 h-4" />;
       default:
         return <AlertTriangle className="w-4 h-4" />;
     }
   };
 
-  const getStatusText = (status: Status) => {
+  const getStatusText = (status: AnalysisResult["status"]) => {
     switch (status) {
       case "low":
         return "Low";
@@ -50,7 +58,11 @@ const ResultItem = ({ label, value, status, unit }: ResultItemProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0">
+    <div
+      className={`flex items-center justify-between py-2 border-b ${
+        state.darkMode ? "border-gray-600" : "border-gray-200"
+      } last:border-b-0`}
+    >
       <span className="font-medium">{label}:</span>
       <div className="flex items-center">
         <span className="mr-2">
